@@ -13,49 +13,53 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
 {
-    Button button;
-
-    private TextView countdownTextView;
+    private TextView countdownText;
+    private TextView timeRemainingText;
     private CountDownTimer countDownTimer;
+    private long timeLeftInMillis = 5000;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //button = findViewById(R.id.button2);
+        countdownText = findViewById(R.id.countdownText);
+        timeRemainingText = findViewById(R.id.timeRemainingText);
 
-        countdownTextView = findViewById(R.id.countdown_timer);
-
+        // Iniciar el contador de tiempo
         startCountdownTimer();
     }
 
     private void startCountdownTimer()
     {
-        countDownTimer = new CountDownTimer(5000, 1000)
-        {
+        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
-            public void onTick(long millisUntilFinished)
-            {
-                long secondRemaining = millisUntilFinished / 1000;
-                countdownTextView.setText(secondRemaining + "seg.");
+            public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
+                updateCountdownText();
             }
 
             @Override
-            public void onFinish()
-            {
-                Intent intent = new Intent(this, MainActivity2.class);
-                startActivity(intent);
+            public void onFinish() {
+                timeLeftInMillis = 0;
+                updateCountdownText();
+                navigateToOtherActivity();
             }
         }.start();
     }
 
     //-------------------------------------------------------------------------
 
-    public void entrar(View v)
-    {
-        //Intent intent = new Intent(this, MainActivity2.class);
-        //startActivity(intent);
+    private void updateCountdownText() {
+        long seconds = timeLeftInMillis / 1000;
+        countdownText.setText(String.valueOf(seconds));
+        timeRemainingText.setText("segundos restantes");
+    }
+
+    private void navigateToOtherActivity() {
+        Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+        startActivity(intent);
+        finish(); // Opcionalmente, puedes finalizar esta actividad para que no se pueda volver atrás
     }
 
 }
